@@ -10,6 +10,7 @@ const Wrap = styled.div`
   .start-btn-container {
     display: inline;
     vertical-align: middle;
+    text-align: center;
     
     button {
       height: 60px;

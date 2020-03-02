@@ -5,13 +5,18 @@ import PageView from './PageView'
 import styled from 'styled-components'
 
 const GameContainer = styled.div`
+  height: 98%;
   max-height: 100%;
   max-width: 100%;
-  padding: 1% 15% 5% 15%;
+  padding: 1% 15% 0 15%;
+  background-color: black;
+  background-image: url(/cards/TitleBackground.png);
   
   h1 {
     width: 100%;
     text-align: center;
+    padding-bottom: 50%;
+    color: gold;
   }
   
   p {     
@@ -27,33 +32,70 @@ class Game extends Component {
   state = {
     gameInProgress: false,
     cards: null,
-    currentIndex: 0
+    currentLvl: 0,
+    nextOption0: null,
+    nextOption1: null,
+    currentCard: null 
   }
 
   startGame = () => {
-    let shuffledCards = this.shuffle(cardsConfig)
+    // When starting a new game, shuffle all three levels and store them in the game state
+    let lvl0 = this.shuffle(cardsConfig[0])
+    let lvl1 = this.shuffle(cardsConfig[1])
+    let lvl2 = this.shuffle(cardsConfig[2])
 
-    this.setState({cards: shuffledCards, gameInProgress: true})
+    this.setState({cards: [lvl0, lvl1, lvl2], gameInProgress: true, currentLvl: 0})
   }
 
-  nextCard = () => {
-    const {currentIndex, cards} = this.state
+  // nextCard = () => {
+  //   const {currentIndex, cards} = this.state
 
-    if(currentIndex < cards.length - 1) {
-      this.setState({currentIndex: currentIndex + 1})
-    }
-  }
+  //   if(currentIndex < cards.length - 1) {
+  //     this.setState({currentIndex: currentIndex + 1})
+  //   }
+  // }
 
-  lastCard = () => {
-    const {currentIndex} = this.state
+  // lastCard = () => {
+  //   const {currentIndex} = this.state
 
-    if(currentIndex > 0) {
-      this.setState({currentIndex: currentIndex - 1})
-    }
-  }
+  //   if(currentIndex > 0) {
+  //     this.setState({currentIndex: currentIndex - 1})
+  //   }
+  // }
 
   restart = () => {
-    this.setState({cards: null, gameInProgress: false, currentIndex: 0})
+    // Reset the game
+    this.setState({cards: null, gameInProgress: false, currentLvl: 0})
+  }
+
+  selectNextCard = nextCardTitle => {
+    const {cards, currentLvl} = this.state
+
+    const nextLvl = currentLvl + 1
+    const nextCard = cards[nextLvl].find(card => card.title === nextCardTitle)
+    console.log(nextCardTitle, nextCard)
+
+    this.setState({
+      currentCard: nextCard,
+      currentLvl: nextLvl
+    })
+  }
+
+  getNewOption = (currentLvl, currentOption) => {
+    const {cards} = this.state
+
+    let nextCards = cards[currentLvl]
+
+    if(currentOption) {
+      // Filter out the current options from the selection
+      const filteredNextCards = nextCards.filter(option => option.title !== currentOption.title)
+
+      // Select a random card from the list
+      return filteredNextCards[Math.floor(Math.random() * filteredNextCards.length)]
+    }
+
+    // Select a random card from the list
+    return nextCards[Math.floor(Math.random() * nextCards.length)]
   }
 
   shuffle = array => {
@@ -84,10 +126,9 @@ class Game extends Component {
     const {
       gameInProgress,
       cards,
-      currentIndex
+      currentLvl,
+      currentCard
     } = this.state
-
-    console.log(cards)
 
     if(!gameInProgress) {
       return (
@@ -97,9 +138,24 @@ class Game extends Component {
       )
     }
 
+    const card = currentCard ?? this.getNewOption(currentLvl, null)
+    let option1 = null
+    let option2 = null
+    if(currentLvl < cards.length - 1) {
+      option1 = this.getNewOption(currentLvl + 1, null)
+      option2 = this.getNewOption(currentLvl + 1, option1)
+      console.log(option1, option2)
+    }
+
     return (
       <GameContainer>
-        <PageView cards={cards} currentIndex={currentIndex} restart={this.restart}/>
+        <PageView 
+          currentCard={card}
+          restart={this.restart} 
+          option1={option1}
+          option2={option2}
+          selectNextCard={this.selectNextCard}
+        />
       </GameContainer>
     )
   }
