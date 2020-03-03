@@ -1,65 +1,55 @@
 import React, {Component} from 'react'
 import Loading from './Loading'
-import styled from 'styled-components'
+import {Card} from '@material-ui/core'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import CardActions from '@material-ui/core/CardActions'
+import CardMedia from '@material-ui/core/CardMedia'
+import {withStyles} from '@material-ui/styles'
 
-const Wrap = styled.div`
-  button {
-    width: 120px;
-    height: 40px;
-    margin: 0 auto;
+const StyledCard = withStyles({
+  root: {
+    marginTop: 60,
+    paddingTop: 60,
+    paddingBottom: 30
   }
-  
-  .fadein {
-    animation: fadein 2s;
-  }
-  
-  @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
+})(Card)
 
-  .card-image-container {
-    padding-bottom: 2%;
-    img {
-      display: block;
-      margin: 0 auto 10px auto;
-      width: 50%;
-      border: 40px solid white;
-    }
-  }
-  
-  .controls {
-    display: inline-flex;
-    justify-content: space-around;
-    width: 100%;
-  }
-  
-  .restart-btn {
-    display: block;
-    margin-top: 10px;
-  }
 
-  .option1-btn {}
-
-  .option2-btn {
-    transform: scaleX(-1);
+const StyledCardMedia = withStyles({
+  img: {
+    width: '80%',
+    margin: '0 auto'
   }
-  
-  
-  @media only screen and (max-width: 950px) {
-    padding: 2% 6% 0 2%;
-    
-    .card-image-container {
-      img {
-        width: 75%;
-      }
-    }
-    
-    .controls {
-      padding: 0 10px 15% 10px;
-    }
-  } 
-`
+})(CardMedia)
+
+const StyledCardActions = withStyles({
+  root: {
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  }
+})(CardActions)
+
+const LeftOptionButton = withStyles({
+  root: {
+    width: '45%'
+  }
+})(IconButton)
+
+const RightOptionButton = withStyles({
+  root: {
+    width: '45%',
+    transform: 'scaleX(-1)'
+  }
+})(IconButton)
+
+const RestartButton = withStyles({
+  root: {
+  }
+})(Button)
+
+
+
 
 export default class PageView extends Component {
   render() {
@@ -68,27 +58,37 @@ export default class PageView extends Component {
       restart,
       selectNextCard,
       option1, 
-      option2
+      option2,
+      morePlayers
     } = this.props
 
     if(currentCard) {
       return (
-        <Wrap id='page-wrap'>
-          <div className='card-image-container fadein'>
-            <img src={currentCard.path} alt={currentCard.title}/>
-            <div className='controls'>
-              <div className='option1-btn' onClick={() => selectNextCard(option1?.title)} value={option2?.title}>
-                <img src={option1?.arrow} alt='option2' width={170}/>
-              </div>
-              <div className='option2-btn' onClick={() => selectNextCard(option2?.title)} value={option2?.title}>
-                <img src={option2?.arrow} alt='option2' width={170}/>
-              </div>
-            </div>
-            <button className='restart-btn' onClick={restart}>
-              Restart
-            </button>
-          </div>
-        </Wrap>
+        <StyledCard>
+          <StyledCardMedia image={currentCard.path} title={currentCard.title} component='img'/>
+          <StyledCardActions>
+            {(!morePlayers || option1 !== null)  &&
+              <LeftOptionButton onClick={() => selectNextCard(option1?.title)} value={option2?.title}>
+                <img src={option1?.arrow} width={170}/>
+              </LeftOptionButton>
+            }
+            {(!morePlayers || option1 !== null) &&
+              <RightOptionButton onClick={() => selectNextCard(option2?.title)} value={option2?.title}>
+                <img src={option2?.arrow} width={170}/>
+              </RightOptionButton>
+            }
+            {morePlayers &&
+              <RestartButton onClick={restart} variant="contained">
+                Next Player
+              </RestartButton>
+            }
+            {(!morePlayers && option1 === null && option2 === null) &&
+            <RestartButton onClick={restart} variant="contained">
+              Complete
+            </RestartButton>
+            }
+          </StyledCardActions>
+        </StyledCard>
       )
     }
 

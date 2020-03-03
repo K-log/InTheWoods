@@ -6,6 +6,10 @@ body {
   font-family: 'Calligraffitti', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url('/cards/TitleBackground.png');
+  background-color: black !important;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 code {
