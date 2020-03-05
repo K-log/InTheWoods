@@ -52,6 +52,7 @@ const RestartButton = withStyles({
 
 
 export default class PageView extends Component {
+
   render() {
     const {
       currentCard,
@@ -59,7 +60,8 @@ export default class PageView extends Component {
       selectNextCard,
       option1, 
       option2,
-      morePlayers
+      morePlayers,
+      showResults
     } = this.props
 
     if(currentCard) {
@@ -68,12 +70,20 @@ export default class PageView extends Component {
           <StyledCardMedia image={currentCard.path} title={currentCard.title} component='img'/>
           <StyledCardActions>
             {(!morePlayers || option1 !== null)  &&
-              <LeftOptionButton onClick={() => selectNextCard(option1?.title)} value={option2?.title}>
+              <LeftOptionButton
+                onClick={() => selectNextCard(option1?.title)}
+                value={option2?.title}
+                disabled={morePlayers || option1 === null}
+              >
                 <img src={option1?.arrow} width={170}/>
               </LeftOptionButton>
             }
-            {(!morePlayers || option1 !== null) &&
-              <RightOptionButton onClick={() => selectNextCard(option2?.title)} value={option2?.title}>
+            {(!morePlayers || option2 !== null) &&
+              <RightOptionButton
+                onClick={() => selectNextCard(option2?.title)}
+                value={option2?.title}
+                disabled={morePlayers || option2 === null}
+              >
                 <img src={option2?.arrow} width={170}/>
               </RightOptionButton>
             }
@@ -83,7 +93,7 @@ export default class PageView extends Component {
               </RestartButton>
             }
             {(!morePlayers && option1 === null && option2 === null) &&
-            <RestartButton onClick={restart} variant="contained">
+            <RestartButton onClick={showResults} variant="contained">
               Complete
             </RestartButton>
             }

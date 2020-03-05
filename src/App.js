@@ -7,9 +7,7 @@ function App() {
   return (
     <>
       <CssBaseline/>
-      <Container maxWidth="sm">
-        <Game/>
-      </Container>
+      <Game/>
     </>
   )
 }
